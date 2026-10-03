@@ -1,0 +1,31 @@
+ism330dhcx_node:
+  ros__parameters:
+    spi:
+      device: /dev/spidev0.0
+      speed_hz: 8000000          # sensor max 10 MHz
+    frame_id: imu_link
+    imu_topic: imu
+    temperature_topic: imu/temperature
+
+    odr_hz: 208.0                # 12.5, 26, 52, 104, 208, 416, 833, 1666, 3332, 6667
+    accel_range_g: 4             # 2, 4, 8, 16
+    gyro_range_dps: 500          # 125, 250, 500, 1000, 2000, 4000
+
+    poll_period_ms: 10           # FIFO drain period; each poll publishes ~odr*period samples
+    reconnect_period_ms: 1000
+    max_words_per_poll: 512
+    settle_time_s: 0.1           # discard samples after (re)configuration; gyro turn-on is ~70 ms
+
+    # Startup gyro bias estimate; the robot must be still for duration_s.
+    calibration:
+      enabled: true
+      duration_s: 2.0
+      max_gyro_stddev: 0.01      # rad/s; above this the robot is considered moving
+      max_attempts: 5
+    gyro_bias: [0.0, 0.0, 0.0]   # rad/s, used when calibration is disabled or gives up
+
+    # Reported covariances (variance = stddev^2). Datasheet noise densities are
+    # 5 mdps/sqrt(Hz) (gyro) and 60 ug/sqrt(Hz) (accel); defaults leave headroom for vibration.
+    noise:
+      angular_velocity_stddev: 0.003     # rad/s, measured ~0.0027 at rest
+      linear_acceleration_stddev: 0.015  # m/s^2, measured ~0.012 at rest

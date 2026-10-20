@@ -3,7 +3,7 @@
 <package format="3">
   <name>ism330dhcx_node</name>
   <version>0.0.0</version>
-  <description>ROS 2 node publishing sensor_msgs/Imu from an ISM330DHCX on SPI</description>
+  <description>Slamming Works ROS 2 node publishing IMU data from an ISM330DHCX over SPI</description>
   <maintainer email="alessiomorale@gmail.com">Alessio Morale</maintainer>
   <license>MIT</license>
 

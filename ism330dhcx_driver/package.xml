@@ -3,7 +3,7 @@
 <package format="3">
   <name>ism330dhcx_driver</name>
   <version>0.0.0</version>
-  <description>ROS-independent ISM330DHCX 6-axis IMU driver over Linux spidev</description>
+  <description>Slamming Works ROS-independent ISM330DHCX driver over Linux spidev</description>
   <maintainer email="alessiomorale@gmail.com">Alessio Morale</maintainer>
   <license>MIT</license>
 

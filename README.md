@@ -1,13 +1,48 @@
-# ros_ism330_imu
+![Slamming Works brand lockup](assets/slw-lockup.svg)
 
-ROS 2 driver for the ST ISM330DHCX 6-axis IMU on Linux spidev.
+# ISM330DHCX IMU driver
+
+Slamming Works' ROS 2 driver for the ST ISM330DHCX 6-axis IMU, using Linux spidev.
+
+## Demo
+
+There is no IMU demo video or GIF in this repository yet.
+
+## Hardware
+
+The driver connects to an ISM330DHCX over SPI. The wiring table below documents the KVN rover's SPI0 connection. A consolidated BOM and schematic are not included here.
+
+## Build and run
+
+From the ROS 2 workspace root:
+
+```bash
+rosdep install --from-paths src --ignore-src -y
+colcon build --packages-up-to ism330dhcx_node
+source install/setup.bash
+```
+
+Connect the sensor and confirm the SPI device in `config/ism330dhcx.yaml`, then launch:
+
+```bash
+ros2 launch ism330dhcx_node ism330dhcx.launch.py
+ros2 topic echo /imu --once
+ros2 topic echo /diagnostics
+```
+
+Run the package tests with:
+
+```bash
+colcon test --packages-select ism330dhcx_driver ism330dhcx_node
+colcon test-result --verbose
+```
 
 | Package | Content |
 | ------- | ------- |
 | `ism330dhcx_driver` | ROS-independent register/FIFO driver, `SpiBus` (spidev, mode 3), fake bus for tests |
-| `ism330dhcx_node` | Node publishing `sensor_msgs/Imu` on `imu` and `sensor_msgs/Temperature` on `imu/temperature`, plus diagnostics |
+| `ism330dhcx_node` | Node publishing `sensor_msgs/Imu`, `sensor_msgs/Temperature` and diagnostics |
 
-## Wiring (kvn_expio SPI0, see `ports.md`)
+### Wiring (KVN ExPIO SPI0)
 
 | Pi pin | GPIO | Signal | ISM330DHCX |
 | ------ | ---- | ------ | ---------- |
@@ -36,13 +71,12 @@ INT1/INT2 are not used: the node polls the FIFO.
 Data is in the sensor's axes, stamped with `frame_id` (`imu_link`). Put the mounting
 rotation in `kvn_robot_description/config/robot_config.yaml` (`imu_*`).
 
-## Bring-up
+The sample configuration sets the requested output data rate to 208 Hz. Actual publication depends on the sensor, SPI connection and polling configuration. If the log shows `unexpected WHO_AM_I 0x00` or `0xFF`, check the wiring and power.
 
-```bash
-ros2 launch ism330dhcx_node ism330dhcx.launch.py
-ros2 topic hz /imu                 # ~208 Hz
-ros2 topic echo /imu --once        # still and level: accel z ~ +9.81, gyro ~ 0
-ros2 topic echo /diagnostics
-```
+## Status
 
-If the log shows `unexpected WHO_AM_I 0x00` or `0xFF`, check the wiring and power.
+**Partly works.** The driver, ROS node, configuration and tests are present. Orientation is not estimated, and this repository does not include an IMU test recording or results log.
+
+## License
+
+MIT. See [LICENSE](LICENSE).
